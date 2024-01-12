@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.fundamentals.R
 import com.android.fundamentals.data.models.Actor
 import com.android.fundamentals.domain.ActorsDataSource
+import com.android.fundamentals.workshop03.solution.OnRecyclerItemClicked
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -28,8 +29,7 @@ class WS03ActorsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recycler = view.findViewById(R.id.rv_actors)
-        //TODO 5: pass click listener to adapter
-        recycler?.adapter = WS03ActorsAdapter()
+        recycler?.adapter = WS03ActorsAdapter(clickListener)
     }
 
     override fun onStart() {
@@ -60,11 +60,11 @@ class WS03ActorsFragment : Fragment() {
         }
     }
 
-    /*TODO 4: create implementation of click listener
-                you can call function
-                doOnClick(actor: Actor)
-     */
-//    private val clickListener
+    private val clickListener = object : ClickListener {
+        override fun onClick(actor: Actor) {
+            doOnClick(actor)
+        }
+    }
 
     companion object {
         fun newInstance() = WS03ActorsFragment()

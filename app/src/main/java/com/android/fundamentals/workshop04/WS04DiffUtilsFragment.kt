@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.fundamentals.R
@@ -46,11 +47,27 @@ class WS04DiffUtilsFragment : Fragment() {
     private fun shuffleActors() {
         val shuffledList: List<Actor> = ActorsDataSource().getActors().shuffled()
         adapter.bindActors(shuffledList)
-        // TODO: Replace notifyDataSetChanged for updating the recyclerView to DiffUtil.Callback.
-        adapter.notifyDataSetChanged()
+        val callback = DiffUtilChange(ActorsDataSource().getActors(), shuffledList)
+        val diff = DiffUtil.calculateDiff(callback)
+        diff.dispatchUpdatesTo(adapter)
     }
 
     companion object {
         fun newInstance() = WS04DiffUtilsFragment()
     }
+}
+
+class DiffUtilChange(
+    private val oldList: List<Actor>,
+    private val newList: List<Actor>) : DiffUtil.Callback() {
+    override fun getOldListSize(): Int = oldList.size
+
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+        oldList[oldItemPosition].name == newList[newItemPosition].name
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+        oldList[oldItemPosition] == newList[newItemPosition]
+
 }
