@@ -87,7 +87,7 @@ class WS01ThreadsTaskFragment: Fragment(R.layout.fragment_ws_01) {
         override fun run() {
             Thread.sleep(4000)
             val mes = Message()
-            mes.data.putString(MESSAGE_KEY, getString(R.string.thread_worked))
+            mes.data.putString(MESSAGE_KEY, getString(R.string.runnable_worked))
             handler.sendMessage(mes)
         }
 

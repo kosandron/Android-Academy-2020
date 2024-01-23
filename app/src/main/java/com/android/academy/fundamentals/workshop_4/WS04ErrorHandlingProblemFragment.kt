@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.android.academy.fundamentals.R
 import kotlinx.coroutines.*
 import java.io.IOException
+import java.lang.Exception
 import java.lang.StringBuilder
 
 class WS04ErrorHandlingProblemFragment : Fragment(R.layout.fragment_ws_04) {
@@ -42,10 +43,10 @@ class WS04ErrorHandlingProblemFragment : Fragment(R.layout.fragment_ws_04) {
     }
 
     // TODO 01: Create the CoroutineScope from Default dispatchers and common Job.
-    private fun createScope(): CoroutineScope = TODO()
+    private fun createScope(): CoroutineScope = CoroutineScope(Dispatchers.Default + Job())
 
     // TODO 02: Create the CoroutineScope from Default dispatchers and Supervisor job.
-    private fun createSuperScope(): CoroutineScope = TODO()
+    private fun createSuperScope(): CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private var coroutineScope = createScope()
     private var coroutineSupervisorScope = createSuperScope()
@@ -91,7 +92,13 @@ class WS04ErrorHandlingProblemFragment : Fragment(R.layout.fragment_ws_04) {
     //  This will fail coroutine with Exception and close Application.
     //  Catch and Log exception with proper Logger method (you can't).
     private fun failLaunchWithException() {
-        methodWithException("failLaunchWithException", coroutineScope.isActive)
+        try{
+            coroutineScope.launch {
+                methodWithException("failLaunchWithException", coroutineScope.isActive)
+            }
+        } catch (throwable: Throwable) {
+            logException("failLaunchWithException::Recovered", throwable)
+        }
     }
 
     // TODO 04: Run "methodWithException("workWithHandledException")" inside a coroutine:
@@ -99,7 +106,13 @@ class WS04ErrorHandlingProblemFragment : Fragment(R.layout.fragment_ws_04) {
     //  Try to run the method and Catch exception.
     //  Log exception with proper Logger method.
     private fun workWithHandledException() {
-        methodWithException("workWithHandledException", coroutineScope.isActive)
+        try{
+            coroutineSupervisorScope.launch {
+                methodWithException("workWithHandledException", coroutineScope.isActive)
+            }
+        } catch (throwable: Throwable) {
+            logException("failLaunchWithException::Recovered", throwable)
+        }
     }
 
     // TODO 05: Create "val deferred" with "methodWithException("failAwaitWithException")" inside a deferred:
