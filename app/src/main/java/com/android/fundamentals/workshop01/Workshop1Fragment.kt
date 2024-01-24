@@ -52,25 +52,19 @@ class Workshop1Fragment : Fragment(R.layout.fragment_workshop_1_workshop_2), Wor
     }
 
     override fun setLoading(loading: Boolean) {
-        //TODO 01: Depending on "loading" value, set "loader" visibility = View.VISIBLE/GONE.
-        // And opposite, set "loginBtn" disabled/enabled.
         loader?.isVisible = loading
         loginBtn?.isEnabled = !loading
     }
 
     override fun showUserNameError() {
-        //TODO 02: Set error for "userNameInput" from strings resources (ws01_ws02_user_name_error).
         userNameInput?.error = getString(R.string.ws01_ws02_user_name_error)
     }
 
     override fun showPasswordError() {
-        //TODO 03: Set error for "passwordInput" from strings resources (ws01_ws02_password_error).
         userNameInput?.error = getString(R.string.ws01_ws02_password_error)
     }
 
     override fun showSuccess() {
-        //TODO 04: Set "loginBtn" visibility = View.INVISIBLE.
-        // And opposite, set "loginSuccess" visibility = View.VISIBLE.
         loginBtn?.visibility = View.INVISIBLE
         loginSuccess?.visibility = View.VISIBLE
     }
@@ -93,7 +87,6 @@ class Workshop1Fragment : Fragment(R.layout.fragment_workshop_1_workshop_2), Wor
         val inputUserName = userNameInput?.text?.toString().orEmpty()
         val inputPassword = passwordInput?.text?.toString().orEmpty()
 
-        //TODO 05: Call presenter's "login()" method.
         presenter.login(inputUserName, inputPassword)
     }
 

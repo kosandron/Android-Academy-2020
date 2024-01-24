@@ -31,7 +31,6 @@ internal class Workshop1PresenterTest {
         val (interactor, presenter, view) = createComponents()
 
         // Call presenter method to attach view
-        // TODO 09: Uncomment this code.
         presenter.attachView(view)
 
         // Checking the view
@@ -43,7 +42,6 @@ internal class Workshop1PresenterTest {
         )
 
         // Call presenter method login
-        // TODO 10: Uncomment this code and run the test.
         presenter.login(userName = "", password = "")
 
         // Checking the view
@@ -68,7 +66,6 @@ internal class Workshop1PresenterTest {
     fun `assert login UserNameError few times`() = runBlockingTest {
         val (interactor, presenter, view) = createComponents()
 
-        // TODO 11: Call presenter attach view.
         presenter.attachView(view)
         view.assert(
             expectedLoading = false,
@@ -78,7 +75,6 @@ internal class Workshop1PresenterTest {
         )
 
         repeat(10) { index ->
-            // TODO 12: Call presenter login with empty name and run test.
             presenter.login("", "bla")
             view.assert(
                 expectedLoading = true,
@@ -101,7 +97,6 @@ internal class Workshop1PresenterTest {
     fun `assert login PasswordError`() = runBlockingTest {
         val (interactor, presenter, view) = createComponents()
 
-        // TODO 13: Call presenter attach view.
         presenter.attachView(view)
         view.assert(
             expectedLoading = false,
@@ -110,7 +105,6 @@ internal class Workshop1PresenterTest {
             expectedSuccessShownTimes = 0
         )
 
-        // TODO 14: Call presenter login with valid name and empty password, and run test.
         presenter.login("Lyagushka", "")
         view.assert(
             expectedLoading = true,
@@ -132,7 +126,6 @@ internal class Workshop1PresenterTest {
     fun `assert login Success`() = runBlockingTest {
         val (interactor, presenter, view) = createComponents()
 
-        // TODO 15: Call presenter attach view.
         presenter.attachView(view)
         view.assert(
             expectedLoading = false,
@@ -141,7 +134,6 @@ internal class Workshop1PresenterTest {
             expectedSuccessShownTimes = 0
         )
 
-        // TODO 16: Call presenter logic with valid data and run test.
         presenter.login("some text", "some text")
         view.assert(
             expectedLoading = true,

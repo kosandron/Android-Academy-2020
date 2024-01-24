@@ -28,7 +28,6 @@ class Workshop1Presenter(
 
     fun login(userName: String, password: String) {
         presenterScope.launch {
-            //TODO 06: On "view" instance, set loading to true
             view?.setLoading(true)
             val loginResult = interactor.login(userName = userName, password = password)
              when (loginResult) {
