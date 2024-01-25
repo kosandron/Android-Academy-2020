@@ -13,11 +13,19 @@ import android.widget.TextView
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.android.academy.fundamentals.BaseFragment
+import com.android.academy.fundamentals.BuildConfig
 import com.android.academy.fundamentals.R
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.coroutines.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.HttpException
+import retrofit2.Retrofit
+import retrofit2.create
+import retrofit2.http.GET
 import java.io.IOException
 import kotlin.random.Random
 
@@ -68,8 +76,7 @@ class WS02Fragment : BaseFragment() {
 
     private fun loadCats() {
         coroutineScope.launch(exceptionHandler) {
-            // TODO: WS02_06: Replace empty list with call API method to get cats
-            val cats = emptyList<CatImage>()
+            val cats = RetrofitModule.catsApi.getCats()
             showCats(cats)
         }
     }
@@ -94,17 +101,14 @@ class WS02Fragment : BaseFragment() {
     }
 }
 
-// TODO WS02_01: Put annotation Serializable to inform kotlin serialisation to generate adapter for it
+@Serializable
 private data class CatImage(
     val id: String,
-    // TODO WS02_02: The json field is named "url" inform kotlin serialisation about it
-    //  with SerialName annotation
-    val imageUrl: String
+    @SerialName("url") val imageUrl: String
 )
 
 private interface CatsApi {
-    // TODO: WS02_03 Mark this method for Retrofit to generate API call class
-    //  use GET annotation and pass URL in
+    @GET("images/search?size=small&order=RANDOM&limit=5&format=json")
     suspend fun getCats(): List<CatImage>
 }
 
@@ -113,10 +117,10 @@ private object RetrofitModule {
         ignoreUnknownKeys = true
     }
 
-    // TODO: WS02_04: Create retrofit instance using builder - provide base url,
-    //  converter factory for json (use asConverterFactory method)
-    // private val retrofit: Retrofit =
+     private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
 
-    // TODO: WS02_05: Create API instance that we will use for networking
-    // val catsApi: CatsApi =
+     val catsApi: CatsApi = retrofit.create()
 }

@@ -53,15 +53,9 @@ class WS01Fragment : BaseFragment() {
 		coroutineScope.launch(exceptionHandler) {
 			
 			createGetImageCall().runCatching {
-				// TODO 03: run this Call synchronously:
-				//  - "execute()" this call, chain "use { response -> ... }" block on executed call
-				//  - "createCatImageResult(...)" inside "use {}" block
-				//  - Obtain the following params from "response" and pass them to the createCatImageResult(...)
-				//  	\___ code, headers, message, body?.string()
-//				this.
-				
-				// TODO 04: remove CatImageResult()
-				CatImageResult()
+				this.execute().use { response ->
+					createCatImageResult(response.code, response.headers, response.message, response.body?.string())
+				}
 				
 			}.onFailure {
 				handleCallError(it)
@@ -94,17 +88,18 @@ class WS01Fragment : BaseFragment() {
 	private fun getImageAsync() {
 		Log.d(TAG, "getImageAsync")
 		coroutineScope.launch(exceptionHandler) {
-			
-			// TODO 05: run this Call asynchronously:
-			//  - "enqueue(...)" this call
-			//  - Pass an anonymous instance of "okhttp3.Callback" as parameter.
-			//  	\___ Instantiate Callback as an object
-			//  - Callback has two functions: "onFailure(...)" and "onResponse(...)"
-			//  - Place "asyncOnFailureFunction(e)" inside the "onFailure(...)"
-			//  - Place "asyncOnResponseFunction(response)" inside the "onResponse(...)"
-			createGetImageCall()
-			
-			// TODO 06: run Application.
+
+			createGetImageCall().enqueue(object : Callback {
+				override fun onFailure(call: Call, e: IOException) {
+					asyncOnFailureFunction(e)
+				}
+
+				override fun onResponse(call: Call, response: Response) {
+					asyncOnResponseFunction(response)
+				}
+
+			})
+
 		}
 	}
 	
@@ -190,17 +185,12 @@ class WS01Fragment : BaseFragment() {
 	// endregion
 	
 	// region prepare http request
-	// TODO 02: Replace TODO() with correct answer:
-	//  - Instantiate the OkHttpClient
-	//  - Call a ".newCall(...)" function on this client
-	//  - Pass the "createGetImageRequest()" as a parameter.
-	private fun createGetImageCall(): Call = TODO()
+	private fun createGetImageCall(): Call = OkHttpClient().newCall(createGetImageRequest())
 	
 	private fun createGetImageRequest() = Request.Builder()
-		// TODO 01: Continue chaining methods to prepare a correct request:
-		//  - Add http method "get"
-		//  - "add header" with name API_KEY_HEADER and value from "getApiKey()"
-		//  - Add "url", concatenate "getBaseUrl()" with IMAGE_REQUEST_ENDPOINT.
+		.get()
+		.addHeader(API_KEY_HEADER, getApiKey())
+		.url(getBaseUrl() + IMAGE_REQUEST_ENDPOINT)
 		.build()
 	// endregion
 	
@@ -243,6 +233,4 @@ class WS01Fragment : BaseFragment() {
 	}
 	
 	// Extra ***
-	// TODO: register on the "https://thecatapi.com/" and obtain your own API_KEY.
-	//  You have to provide some e-mail to this service.
 }
