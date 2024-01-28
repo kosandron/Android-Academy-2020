@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.fundamentals.workshop01.solution.Workshop1SolutionViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,8 +36,9 @@ class Workshop1ViewModel(
                     password.isEmpty() -> LoginResult.Error.Password()
                     else -> {
                         val newToken = UUID.randomUUID().toString()
-                        // TODO 02: create updateUserToken fun that will add or update user token in SP
-
+                        val editor = sharedPreferences.edit()
+                        editor.putString("SECRET_KEY", newToken)
+                        editor.apply()
                         LoginResult.Success()
                     }
                 }
@@ -44,19 +46,31 @@ class Workshop1ViewModel(
         }
     }
 
-    // TODO 03: create logout fun that will wait for logout clear user token from SP
     fun logout() {
+        viewModelScope.launch {
+            withContext(Dispatchers.Main) {
 
-        // TODO 04: create clearUserToken fun that will clear user token from SP when user is logged in
+                _mutableLogoutState.value = LogoutResult.Loading()
+
+                withContext(Dispatchers.IO) {
+                    delay(1000)
+                }
+
+                val editor = sharedPreferences.edit()
+                editor.remove("SECRET_KEY")
+                editor.apply()
+                _mutableLogoutState.value = LogoutResult.Success()
+            }
+        }
     }
 
     fun checkUserIsLoggedIn(): Boolean {
-        // TODO 05: check sharedPreferences is it has saved user token
-        return TODO()
+        val someWord =  sharedPreferences.getString("SECRET_KEY", null)
+        return someWord != null
     }
 
     companion object {
-        const val DELAY_MILLIS: Long = 3_000
+        const val DELAY_MILLIS: Long = 1_000
     }
 }
 

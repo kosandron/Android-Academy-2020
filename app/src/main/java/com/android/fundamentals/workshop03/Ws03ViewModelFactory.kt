@@ -15,8 +15,7 @@ class Ws03ViewModelFactory(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T = when (modelClass) {
         Workshop2Workshop3ViewModel::class.java -> {
             Workshop2Workshop3ViewModel(
-                // TODO 17: Replace "TODO" stub with completed "Ws03LocationsRepository(applicationContext: Context)"
-                repository = TODO()
+                repository = Ws03LocationsRepository(applicationContext)
             )
         }
         Ws03BonusViewModel::class.java -> {
