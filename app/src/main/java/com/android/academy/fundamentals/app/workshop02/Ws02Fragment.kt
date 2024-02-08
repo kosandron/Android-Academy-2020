@@ -36,7 +36,25 @@ class Ws02Fragment : Fragment() {
 	
 	// TODO 09: Replace TODO(). Initialize property as object of "ServiceConnection".
 	//  Implement both "onServiceConnected" and "onServiceDisconnected" functions.
-	private val serviceConnection: ServiceConnection = TODO()
+	private val serviceConnection: ServiceConnection = object : ServiceConnection {
+		override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+			isBound = true
+			boundIndicatorView?.isEnabled = true
+			service = (binder as? Ws02BoundedService.Ws02Binder)?.getService()
+			service?.observableData()?.observe(viewLifecycleOwner) {
+					angles -> updateViews(angles)
+			}
+			Log.d(TAG, "onServiceConnected component:${name?.className}, iBinder:${binder?.javaClass}, service:${service?.javaClass}")
+		}
+
+		override fun onServiceDisconnected(name: ComponentName?) {
+			Log.d(TAG,"onServiceDisconnected component:${name?.className}");
+			isBound = false
+			boundIndicatorView?.isEnabled = false
+			service = null
+		}
+
+	}
 		// TODO 10: Inside "onServiceConnected".
 		//  - Set "isBound" true;
 		//  - Set boundIndicatorView?.isEnabled = true;
@@ -136,7 +154,7 @@ class Ws02Fragment : Fragment() {
 		//  - Pass as param intent from "getServiceIntent()";
 		//  - Pass as param "serviceConnection";
 		//  - Pass as param flag "Context.BIND_AUTO_CREATE".
-		val result = TODO()
+		val result = context?.bindService(getServiceIntent(), serviceConnection, Context.BIND_AUTO_CREATE)
 		Log.d(TAG, "bindToService res:$result")
 	}
 	
@@ -144,13 +162,16 @@ class Ws02Fragment : Fragment() {
 		Log.d(TAG, "unbindFromService isBound:$isBound")
 		// TODO 13: Do not unbind if the service have unbound already.
 		//  Call "return" here if not "isBound".
-//		if (...) ...
+		if (!isBound) {
+			return
+		}
 		
 		isBound = false
 		boundIndicatorView?.isEnabled = false
 		
 		// TODO 14: Unbind service from "context?" with unbindService(...) function.
 		//  - Pass as param "serviceConnection".
+		context?.unbindService(serviceConnection)
 	}
 	
 	// https://www.javacodegeeks.com/2013/09/android-compass-code-example.html
